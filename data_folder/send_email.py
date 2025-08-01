@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from supporting_files.helper_file import get_emailaddress, get_password
+from data_folder.helper_file import get_emailaddress, get_password
 
 def send_email_with_attachment(receiver_email,subject, body, attachment_path):
     """

@@ -4,9 +4,10 @@ import os
 from tkinter import Tk, filedialog
 from docx2pdf import convert
 from datetime import datetime, date
-from supporting_files.send_email import send_email_with_attachment
+from data_folder.send_email import send_email_with_attachment
+from data_folder.helper_file import get_body
 
-body_file_path ='supporting_files/email_body.txt'
+body_file_path = get_body()
 
 # --- Select Excel File ---
 print('Upload excel file-- for Data')
@@ -115,15 +116,16 @@ def generate_docs(row):
         print(f"Error: File not found at '{body_file_path}'")
 
       # Send email with attachment (customize recipient and message as needed)
-    to_email = row.get('Email', 'recipient@example.com')  # Assumes 'Email' column exists
-    if to_email :
+    to_email = row.get('Email', None)  # Assumes 'Email' column exists
+    if to_email and not pd.isna(to_email) and str(to_email).strip() :
         subject = f"Donation Receipt - {file_name_with_date}"
         body_msg = f"Dear {name}, \n \n{body}"
         try:
             send_email_with_attachment(to_email, subject, body_msg, pdf_path)
         except Exception as e:
             print(f"Failed to send email to {to_email}: {e}")
-
+    else:
+        print('Sender email address missing')
 # --- Generate for All Rows ---
 for _, row in df.iterrows():
     generate_docs(row)
