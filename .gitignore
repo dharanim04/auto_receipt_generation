@@ -1,0 +1,8 @@
+build
+dist
+.qodo
+__pycache__
+generated_docs
+generated_pdf
+data.xlsx
+template_final.docx
