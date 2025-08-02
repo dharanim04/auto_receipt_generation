@@ -6,7 +6,7 @@ from tkinter import Tk, filedialog
 from docx2pdf import convert
 from datetime import datetime, date
 from data_folder.send_email import send_email_with_attachment
-from data_folder.helper_file import get_body
+from data_folder.helper_file import get_body, is_valid_email_syntax
 
 # Configure logging
 logging.basicConfig(
@@ -187,7 +187,7 @@ def sending_email_to_receipts(row, pdf_path, name_with_receipt):
 
       # Send email with attachment (customize recipient and message as needed)
     to_email = row.get('Email', None)  # Assumes 'Email' column exists
-    if to_email and not pd.isna(to_email) and str(to_email).strip() :
+    if to_email and not pd.isna(to_email) and str(to_email).strip() and is_valid_email_syntax(to_email) :
         subject = f"Donation Receipt - {name_with_receipt}"
         body_msg = f"Dear {name}, \n \n{body}"
         try:
@@ -196,7 +196,7 @@ def sending_email_to_receipts(row, pdf_path, name_with_receipt):
         except Exception as e:
             logging.error(f"Failed to send email to {to_email}: {e}")
     else:
-        logging.warning('Sender email address missing')
+        logging.warning(f'Invalid email or Sender email address missing: {to_email}')
 
 # --- Generate for All Rows ---
 logging.info('Starting document generation and email sending for all rows.')
