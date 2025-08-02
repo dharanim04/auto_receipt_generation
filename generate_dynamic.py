@@ -9,8 +9,9 @@ from data_folder.send_email import send_email_with_attachment
 from data_folder.helper_file import get_body, is_valid_email_syntax
 
 # create a base folder for log and outputs
-output_folder = f'receipts_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}'
+output_folder = os.path.join('Generated Data', f'receipts_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}')
 os.makedirs(output_folder, exist_ok=True)  # Create folder if it doesn't exist
+
 
 log_file = os.path.join(output_folder, f"log_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}")
 # Configure logging
