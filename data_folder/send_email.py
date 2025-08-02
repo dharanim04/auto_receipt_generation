@@ -1,5 +1,6 @@
 import smtplib
 import os
+import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -10,7 +11,7 @@ def send_email_with_attachment(receiver_email,subject, body, attachment_path):
     """
     Sends an email with attachments using an SMTP server.
     """
-    print("--- SMTP Email Sender with Attachments ---")
+    logging.info("--- SMTP Email Sender with Attachments ---")
     # Get email details from the user
     sender_email = get_emailaddress()
     sender_password = get_password()
@@ -49,47 +50,44 @@ def send_email_with_attachment(receiver_email,subject, body, attachment_path):
 
             # Add attachment to message
             message.attach(part)
-            print(f"Attachment '{os.path.basename(attachment_path)}' added.")
+            logging.info(f"Attachment '{os.path.basename(attachment_path)}' added.")
         except Exception as e:
-            print(f"Error adding attachment: {e}")
-            print("Proceeding without attachment.")
-    elif attachment_path:
-        print(f"Warning: Attachment file not found at '{attachment_path}'. Proceeding without attachment.")
+            logging.error(f"Error adding attachment: {e}")
+            logging.error(f"Error occureed for attachement,So No email has been sent for this email address--- {receiver_email}")
 
     server = None # Initialize server to None
     try:
         # Establish a secure connection with the SMTP server
         if use_tls:
-            print(f"Attempting to connect to {smtp_server}:{smtp_port} with TLS...")
+            logging.info(f"Attempting to connect to {smtp_server}:{smtp_port} with TLS...")
             server = smtplib.SMTP(smtp_server, smtp_port)
             server.starttls()  # Upgrade the connection to a secure encrypted SSL/TLS connection
         else:
-            print(f"Attempting to connect to {smtp_server}:{smtp_port} with SSL...")
+            logging.info(f"Attempting to connect to {smtp_server}:{smtp_port} with SSL...")
             server = smtplib.SMTP_SSL(smtp_server, smtp_port)
 
-        print("Connection established. Attempting to log in...")
+        logging.info("Connection established. Attempting to log in...")
         # Login to the SMTP server
         server.login(sender_email, sender_password)
-        print("Logged in to SMTP server.")
+        logging.info("Logged in to SMTP server.")
 
         # Send the email
         text = message.as_string()
         server.sendmail(sender_email, receiver_email, text)
-        print("Email sent successfully!")
+        logging.info("Email sent successfully!")
 
     except smtplib.SMTPAuthenticationError:
-        print("\nAuthentication Error: Please check your email and password.")
-        print("For Gmail, you might need to use an 'App Password' instead of your regular password.")
+        logging.error("Authentication Error: Please check your email and password.")
+        logging.error("For Gmail, you might need to use an 'App Password' instead of your regular password.")
     except smtplib.SMTPConnectError as e:
-        print(f"\nConnection Error: Could not connect to the SMTP server. Details: {e}")
-        print("Possible causes: Incorrect server address or port, firewall blocking, or no internet connection.")
+        logging.error(f"Connection Error: Could not connect to the SMTP server. Details: {e}")
+        logging.error("Possible causes: Incorrect server address or port, firewall blocking, or no internet connection.")
     except smtplib.SMTPServerDisconnected as e:
-        print(f"\nServer Disconnected Error: The SMTP server unexpectedly closed the connection. Details: {e}")
-        print("This often happens due to incorrect server/port/TLS settings, or a firewall.")
+        logging.error(f"Server Disconnected Error: The SMTP server unexpectedly closed the connection. Details: {e}")
+        logging.error("This often happens due to incorrect server/port/TLS settings, or a firewall.")
     except Exception as e:
-        print(f"\nAn unexpected error occurred: {e}")
+        logging.error(f"An unexpected error occurred: {e}")
     finally:
         if server:
             server.quit()
-            print("Disconnected from SMTP server.")
-
+            logging.info("Disconnected from SMTP server.")
