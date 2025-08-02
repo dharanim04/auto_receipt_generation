@@ -8,9 +8,14 @@ from datetime import datetime, date
 from data_folder.send_email import send_email_with_attachment
 from data_folder.helper_file import get_body, is_valid_email_syntax
 
+# create a base folder for log and outputs
+output_folder = f'receipts_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}'
+os.makedirs(output_folder, exist_ok=True)  # Create folder if it doesn't exist
+
+log_file = os.path.join(output_folder, f"log_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}")
 # Configure logging
 logging.basicConfig(
-    filename=f"log_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}",
+    filename=log_file,
     filemode='a',
     format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -43,7 +48,7 @@ if not template_file:
     exit()
 
 initial_email = input("Receipts will be generated. Do you wish to initiate email delivery? (Y/N): ").lower() == 'y'
-logging.info(f'Initiation of email: {initial_email}')
+logging.info(f'Initiation for emails: {initial_email}')
 
 body_file_path = get_body()
 logging.info(f'Email body file path: {body_file_path}')
@@ -56,11 +61,12 @@ headers = df.columns.tolist()
 logging.info(f'Headers found: {headers}')
 
 # --- Output Directory ---
-output_dir_word = "generated_docs"
+
+output_dir_word = os.path.join(output_folder,"generated_docs")
 os.makedirs(output_dir_word, exist_ok=True)
 logging.info(f'Word output directory: {output_dir_word}')
 
-output_dir_pdf = "generated_pdf"
+output_dir_pdf = os.path.join(output_folder,"generated_pdf")
 os.makedirs(output_dir_pdf, exist_ok=True)
 logging.info(f'PDF output directory: {output_dir_pdf}')
 
@@ -209,3 +215,5 @@ for _, row in df.iterrows():
 
 logging.info(f"✅ All Word and PDF files generated in: {output_dir_word}, {output_dir_pdf}")
 logging.info('Script finished.')
+print('Script finished.')
+
