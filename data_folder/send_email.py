@@ -23,7 +23,7 @@ def send_email_with_attachment(receiver_email,subject, body, attachment_path):
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
-    message["From"] = sender_email
+    message["From"] = f'"Sri Gnana Peetam" {sender_email}'
     message["To"] = receiver_email
     message["Subject"] = subject
 
@@ -73,8 +73,11 @@ def send_email_with_attachment(receiver_email,subject, body, attachment_path):
 
         # Send the email
         text = message.as_string()
-        server.sendmail(sender_email, receiver_email, text)
-        logging.info("Email sent successfully!")
+        result = server.sendmail(sender_email, receiver_email, text)
+        if not result:
+            logging.info("Email sent successfully!")
+        else:
+            logging.info(f"Failed recipients: {result}")
 
     except smtplib.SMTPAuthenticationError:
         logging.error("Authentication Error: Please check your email and password.")
