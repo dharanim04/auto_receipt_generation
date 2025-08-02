@@ -5,7 +5,7 @@ a = Analysis(
     ['generate_dynamic.py'],
     pathex=[],
     binaries=[],
-    datas=[('supporting_files', 'data_folder')],
+    datas=[('data_folder', 'data_folder')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
